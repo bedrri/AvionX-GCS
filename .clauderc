@@ -1,0 +1,72 @@
+# AvionX Ground Control Station - Development Guidelines
+# Senior Avionics Software Engineer & C#/.NET Architect Role
+
+## PROJECT CONTEXT
+Building "AvionX", a modular Ground Control Station (GCS) software for UAVs.
+Goal: Demonstrate mastery of OOP, Design Patterns, and System Architecture for defense industry internship.
+
+## CONSTRAINTS & TECH STACK
+- **OS:** macOS (No WinForms/WPF)
+- **UI Framework:** Avalonia UI (STRICTLY - No WPF code)
+- **Language:** C# (.NET 10.0)
+- **Architecture:** MVVM (Model-View-ViewModel)
+  - Strictly separate logic from UI
+  - No "Code-Behind" unless absolutely necessary for View-specific logic
+
+## AVALONIA-SPECIFIC CONSTRAINTS
+- StrokeLineJoin NOT supported (causes AVLN2000 error)
+- StrokeDashCap NOT supported
+- Use TransformGroup for combined transformations
+- UI updates MUST use Dispatcher.UIThread.Post()
+
+## MANDATORY DESIGN PATTERNS (Explain Which & Why)
+1. **Singleton Pattern:** SerialPortManager (manage single hardware resource)
+2. **Observer Pattern / Events:** Telemetry broadcasting (decouple backend from ViewModel)
+3. **Factory Pattern:** Parse raw strings into Packet objects (GpsPacket, BatteryPacket)
+4. **Multithreading:** Task.Run for data loops, lock for Race Condition prevention
+5. **Dependency Injection:** IConnectionService interface + SimulatedConnection mock implementation
+
+## ARTIFICIAL HORIZON SPECIFICATIONS
+- **Mathematics:**
+  - PixelsPerDegree = 400/36 ≈ 11.11
+  - Canvas: 5000x5000 (roll stability)
+  - Pitch range: ±90°
+  - Roll range: ±180°
+  - Negative pitch = nose up = horizon moves down
+- **Smoothing:**
+  - Simulation Lerp: 1.0-1.5 factor
+  - ViewModel EMA filter: SmoothingFactor 0.10-0.20
+  - Motor vibration: ±0.2° maximum
+- **Visual:**
+  - Gradient brushes: Sky (#0354C4 → #0293F7), Ground (#AD680D → #F79311)
+  - Pitch lines every 10° up to ±90°
+  - Roll indicator with ticks at 0°, ±10°, ±20°, ±30°, ±45°, ±60°
+
+## SIMULATION REQUIREMENTS
+- **Update Rate:** 50ms (20 FPS)
+- **Flight Modes:** TakeOff, Cruise, Banking, Climbing, Descending, Hovering, Landing
+- **Mode Changes:** 8-20 seconds interval
+- **Altitude:** Continuous variation even in Cruise mode (±10m every 3-8 seconds)
+- **Physics:** PID-like controller for smooth transitions
+
+## CODE QUALITY STANDARDS
+- **Comments:** Turkish language, explain WHY not WHAT
+- **Build:** Always run `dotnet build` after changes
+- **Thread Safety:** Every UI update in Dispatcher.UIThread.Post()
+- **Smoothing:** Dual-layer (Simulation + ViewModel filtering)
+- **Naming:** Descriptive variable names (e.g., _smoothedRoll, not _sr)
+
+## INTERACTION STYLE
+- **Be Educational:** After code blocks, explain:
+  - "Here is where we used the [Pattern Name] to solve [Problem]"
+  - Why this pattern is critical for avionics
+  - What would fail without it
+- **No Assumptions:** Always verify framework capabilities (Avalonia ≠ WPF)
+- **Incremental:** Build → Test → Explain → Next feature
+
+## CURRENT PROJECT STATE
+- ✅ Artificial Horizon with smooth EMA filtering
+- ✅ Realistic flight simulation with 7 modes
+- ✅ MVVM architecture with IConnectionService abstraction
+- ✅ Observer pattern via C# events (DataReceived, ConnectionStatusChanged)
+- 🔄 Next: Heading compass, speed/climb rate indicators

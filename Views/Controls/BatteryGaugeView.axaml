@@ -1,0 +1,171 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="250"
+             x:Class="AvionX.Views.Controls.BatteryGaugeView"
+             x:Name="Root">
+
+    <!--
+        BATTERY GAUGE - Horizontal Battery Icon
+
+        DESIGN PATTERN: Custom Control
+        - BatteryLevel property (0-100)
+        - Color-coded bars: Green (80-100), Yellow (40-80), Red (0-40)
+        - Battery icon with filling bars
+
+        AVİONİK STANDART:
+        - Kırmızı zon (<20%): Kritik, acil iniş
+        - Sarı zon (20-40%): Uyarı, dönüş planla
+        - Yeşil zon (>40%): Normal operasyon
+    -->
+
+    <Border Background="#0f0f0f"
+            CornerRadius="8"
+            Padding="15,10"
+            BorderBrush="#5a5a5e"
+            BorderThickness="3">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Battery Icon Container with Percentage on Left -->
+            <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Battery Percentage (Sol Tarafta) -->
+                <TextBlock Grid.Column="0"
+                          Text="{Binding BatteryLevel, ElementName=Root, StringFormat='{}{0:F0}%'}"
+                          FontSize="24"
+                          FontWeight="Bold"
+                          Foreground="{Binding BatteryColor, ElementName=Root}"
+                          VerticalAlignment="Center"
+                          Margin="0,0,15,0"/>
+
+                <!-- Battery Icon -->
+                <Canvas Grid.Column="1"
+                        Width="120" Height="60"
+                        VerticalAlignment="Center">
+
+                    <!-- Battery Body (Main Rectangle) -->
+                    <Border Width="100" Height="50"
+                            BorderBrush="#666"
+                            BorderThickness="2"
+                            CornerRadius="4"
+                            Canvas.Left="0" Canvas.Top="5">
+                    </Border>
+
+                    <!-- Battery Terminal (Right Side Bump) -->
+                    <Border Width="10" Height="20"
+                            Background="#666"
+                            CornerRadius="0,2,2,0"
+                            Canvas.Left="100" Canvas.Top="20">
+                    </Border>
+
+                    <!-- Battery Bars Container (Inside Main Body) - 8 İnce Çubuk -->
+                    <Canvas Canvas.Left="5" Canvas.Top="10" x:Name="PART_BarsCanvas">
+                        <!-- Bar 1 -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="0" Canvas.Top="0"
+                                Opacity="{Binding Bar1Opacity, ElementName=Root}"/>
+
+                        <!-- Bar 2 -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="11.5" Canvas.Top="0"
+                                Opacity="{Binding Bar2Opacity, ElementName=Root}"/>
+
+                        <!-- Bar 3 -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="23" Canvas.Top="0"
+                                Opacity="{Binding Bar3Opacity, ElementName=Root}"/>
+
+                        <!-- Bar 4 -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="34.5" Canvas.Top="0"
+                                Opacity="{Binding Bar4Opacity, ElementName=Root}"/>
+
+                        <!-- Bar 5 -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="46" Canvas.Top="0"
+                                Opacity="{Binding Bar5Opacity, ElementName=Root}"/>
+
+                        <!-- Bar 6 -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="57.5" Canvas.Top="0"
+                                Opacity="{Binding Bar6Opacity, ElementName=Root}"/>
+
+                        <!-- Bar 7 -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="69" Canvas.Top="0"
+                                Opacity="{Binding Bar7Opacity, ElementName=Root}"/>
+
+                        <!-- Bar 8 (Rightmost) -->
+                        <Border Width="9" Height="40"
+                                Background="{Binding BatteryColor, ElementName=Root}"
+                                CornerRadius="2"
+                                Canvas.Left="80.5" Canvas.Top="0"
+                                Opacity="{Binding Bar8Opacity, ElementName=Root}"/>
+                    </Canvas>
+                </Canvas>
+            </Grid>
+
+            <!-- Battery Info Panel -->
+            <StackPanel Grid.Row="1"
+                       Margin="0,10,0,0">
+
+                <!-- Voltage and Time Remaining -->
+                <StackPanel Orientation="Horizontal"
+                           Spacing="20"
+                           HorizontalAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="VOLTAGE"
+                                  FontSize="9"
+                                  Foreground="#666"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,2"/>
+                        <TextBlock Text="14.8V"
+                                  FontSize="11"
+                                  Foreground="White"
+                                  FontWeight="Bold"
+                                  HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Rectangle Width="1" Height="25" Fill="#444"/>
+
+                    <StackPanel>
+                        <TextBlock Text="TIME LEFT"
+                                  FontSize="9"
+                                  Foreground="#666"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,2"/>
+                        <TextBlock Text="25 min"
+                                  FontSize="11"
+                                  Foreground="White"
+                                  FontWeight="Bold"
+                                  HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

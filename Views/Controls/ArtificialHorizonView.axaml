@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
+             x:Class="AvionX.Views.Controls.ArtificialHorizonView">
+
+    <Border Background="#0a0a0a"
+            BorderBrush="#5a5a5e"
+            BorderThickness="3"
+            CornerRadius="10"
+            ClipToBounds="True"
+            BoxShadow="0 4 20 2 #40000000">
+
+        <Grid x:Name="PART_Viewport" ClipToBounds="True">
+
+            <!-- Background Layer: Ground/Sky with horizon line -->
+            <Canvas x:Name="PART_Background"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+
+            <!-- Pitch Indicator Layer: Pitch tick marks (rotates with roll) -->
+            <Grid x:Name="PART_PitchGrid" ClipToBounds="True">
+                <Canvas x:Name="PART_PitchIndicator"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- HUD Overlay Layer: Aircraft symbol and roll indicator (fixed) -->
+            <Canvas x:Name="PART_HUD"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+
+            <!-- Top Compass Layer -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*" />
+                    <RowDefinition Height="90*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" ClipToBounds="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35*" />
+                        <ColumnDefinition Width="30*" />
+                        <ColumnDefinition Width="35*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid x:Name="PART_CompassGrid" Grid.Column="1" ClipToBounds="True">
+                        <Canvas x:Name="PART_Compass"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top" />
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!-- Bottom Info Panel -->
+            <StackPanel VerticalAlignment="Bottom"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10">
+                <Border Background="#DD000000"
+                       CornerRadius="6"
+                       Padding="12,6"
+                       BorderBrush="#FFD700"
+                       BorderThickness="1">
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="PITCH:"
+                                      Foreground="#888"
+                                      FontSize="11"
+                                      FontWeight="Bold"/>
+                            <TextBlock x:Name="PART_PitchText"
+                                      Foreground="#00FF00"
+                                      FontSize="11"
+                                      FontWeight="Bold"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="ROLL:"
+                                      Foreground="#888"
+                                      FontSize="11"
+                                      FontWeight="Bold"/>
+                            <TextBlock x:Name="PART_RollText"
+                                      Foreground="#F80"
+                                      FontSize="11"
+                                      FontWeight="Bold"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+        </Grid>
+    </Border>
+
+</UserControl>

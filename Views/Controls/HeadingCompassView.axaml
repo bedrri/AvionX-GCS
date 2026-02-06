@@ -1,0 +1,162 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="250"
+             x:Class="AvionX.Views.Controls.HeadingCompassView"
+             x:Name="Root">
+
+    <!--
+        HEADING COMPASS - Dönen Pusula
+
+        DESIGN PATTERN: Custom Control
+        - Heading property'si ile dış dünyadan veri alır
+        - RenderTransform ile smooth rotation
+        - Avionics standardına uygun görsel
+
+        Kullanım:
+        <controls:HeadingCompassView Heading="{Binding HeadingAngle}"/>
+    -->
+
+    <Border Background="#0f0f0f"
+            CornerRadius="8"
+            Padding="15"
+            BorderBrush="#5a5a5e"
+            BorderThickness="3"
+            ClipToBounds="True">
+        <Grid ClipToBounds="True">
+            <!-- Başlık -->
+            <TextBlock Text="COMPASS"
+                       FontSize="12"
+                       Foreground="#666"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0,0,0,10"/>
+
+            <!-- Ana Pusula Container -->
+            <Viewbox Width="200" Height="200"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="0,20,0,60">
+                <Canvas Width="200" Height="200">
+
+                    <!-- Sabit Dış Çember (Kasa) -->
+                    <Ellipse Width="200" Height="200"
+                            Stroke="#3e3e42"
+                            StrokeThickness="3"
+                            Canvas.Left="0" Canvas.Top="0"/>
+
+                    <!-- Derece İşaretleri Çemberi -->
+                    <Ellipse Width="180" Height="180"
+                            Stroke="#2a2a2a"
+                            StrokeThickness="1"
+                            Canvas.Left="10" Canvas.Top="10"/>
+
+                    <!-- DÖNEN KISIM: Pusula Kadranı -->
+                    <!-- Heading'e göre ters yönde döner (uçak sabit, dünya döner mantığı) -->
+                    <!-- Tick marks programatically drawn in code-behind for perfect symmetry -->
+                    <Canvas x:Name="PART_CompassDial" Width="200" Height="200">
+                        <!-- N (Kuzey) - 0° - Mathematically centered -->
+                        <Border Background="#FFD700"
+                                CornerRadius="3"
+                                Padding="6,3"
+                                Canvas.Left="88" Canvas.Top="5">
+                            <TextBlock Text="N"
+                                      FontSize="18"
+                                      FontWeight="Bold"
+                                      Foreground="Black"
+                                      HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <!-- E (Doğu) - 90° - Mathematically centered -->
+                        <TextBlock Text="E"
+                                  FontSize="16"
+                                  FontWeight="Bold"
+                                  Foreground="White"
+                                  Canvas.Left="175" Canvas.Top="92"/>
+
+                        <!-- S (Güney) - 180° - Mathematically centered -->
+                        <TextBlock Text="S"
+                                  FontSize="16"
+                                  FontWeight="Bold"
+                                  Foreground="White"
+                                  Canvas.Left="93" Canvas.Top="175"/>
+
+                        <!-- W (Batı) - 270° - Mathematically centered -->
+                        <TextBlock Text="W"
+                                  FontSize="16"
+                                  FontWeight="Bold"
+                                  Foreground="White"
+                                  Canvas.Left="8" Canvas.Top="92"/>
+                    </Canvas>
+
+                    <!-- SABİT UÇAK SEMBOLÜ (Merkez - Yukarı Bakan) -->
+                    <Canvas Canvas.Left="100" Canvas.Top="100">
+                        <!-- Uçak başı (üçgen) -->
+                        <Path Data="M 0,-40 L -8,-25 L 8,-25 Z"
+                              Fill="#00FF00"
+                              StrokeThickness="0"/>
+
+                        <!-- Gövde -->
+                        <Rectangle Width="3" Height="50"
+                                  Fill="#00FF00"
+                                  Canvas.Left="-1.5" Canvas.Top="-25"/>
+
+                        <!-- Sol kanat -->
+                        <Rectangle Width="25" Height="3"
+                                  Fill="#00FF00"
+                                  Canvas.Left="-28" Canvas.Top="-1.5"/>
+
+                        <!-- Sağ kanat -->
+                        <Rectangle Width="25" Height="3"
+                                  Fill="#00FF00"
+                                  Canvas.Left="3" Canvas.Top="-1.5"/>
+                    </Canvas>
+
+                    <!-- Merkez Noktası -->
+                    <Ellipse Width="6" Height="6"
+                            Fill="#FFD700"
+                            Canvas.Left="97" Canvas.Top="97"/>
+
+                </Canvas>
+            </Viewbox>
+
+            <!-- Alt Bilgi Paneli -->
+            <StackPanel VerticalAlignment="Bottom"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,5">
+
+                <!-- Heading Değeri -->
+                <TextBlock Text="{Binding Heading, ElementName=Root, StringFormat='{}{0:F0}°'}"
+                          FontSize="32"
+                          FontWeight="Bold"
+                          Foreground="White"
+                          HorizontalAlignment="Center"/>
+
+                <!-- Wind Direction (Şimdilik statik) -->
+                <TextBlock Text="WIND DIRECTION"
+                          FontSize="9"
+                          Foreground="#666"
+                          HorizontalAlignment="Center"
+                          Margin="0,5,0,2"/>
+
+                <TextBlock Text="0° (N)"
+                          FontSize="11"
+                          Foreground="#888"
+                          HorizontalAlignment="Center"/>
+
+                <TextBlock Text="WIND SPEED"
+                          FontSize="9"
+                          Foreground="#666"
+                          HorizontalAlignment="Center"
+                          Margin="0,5,0,2"/>
+
+                <TextBlock Text="0 m/s"
+                          FontSize="11"
+                          Foreground="#888"
+                          HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

@@ -1,0 +1,219 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:AvionX.Views.Controls"
+        xmlns:vm="using:AvionX.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1600" d:DesignHeight="900"
+        x:Class="AvionX.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AvionX - Ground Control Station"
+        Width="1600" Height="900"
+        MinWidth="1280" MinHeight="720"
+        WindowStartupLocation="CenterScreen"
+        Background="#0a0a0a">
+
+    <Design.DataContext>
+        <vm:MainViewModel/>
+    </Design.DataContext>
+
+    <!--
+        ANA LAYOUT YAPISI (Referans görselden ilham alındı)
+        - Top Status Bar: Mission time, battery, connection
+        - Center: Instrument panels grid
+        - Bottom: Control buttons
+    -->
+
+    <Grid RowDefinitions="Auto, *">
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- TOP STATUS BAR (Görselin üst kısmı)                                  -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="#000000" BorderBrush="#3e3e42" BorderThickness="0,0,0,1" Padding="15,8">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto,Auto">
+
+                <!-- Sol: Zaman damgası -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="⏱" FontSize="16" Foreground="#888" VerticalAlignment="Center"/>
+                    <TextBlock Text="14.11.2022 15:45:14" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Merkez: Mission Time -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                    <TextBlock Text="OPERATION TIME" FontSize="11" Foreground="#888" VerticalAlignment="Center"/>
+                    <TextBlock Text="00:00:00:00" FontSize="16" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Sağ: Durum göstergeleri -->
+                <Border Grid.Column="2" Background="#1a1a1a" BorderBrush="#5a5a5e" BorderThickness="3" CornerRadius="4" Padding="10,4" Margin="5,0">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBlock Text="UAV CHARGE:" FontSize="10" Foreground="#888" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding BatteryText}" FontSize="12" Foreground="#00FF00" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="3" Background="#1a1a1a" BorderBrush="#5a5a5e" BorderThickness="3" CornerRadius="4" Padding="10,4" Margin="5,0">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBlock Text="UPLINK:" FontSize="10" Foreground="#888" VerticalAlignment="Center"/>
+                        <TextBlock Text="100%" FontSize="12" Foreground="#00FF00" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="4" Background="#1a1a1a" BorderBrush="#5a5a5e" BorderThickness="3" CornerRadius="4" Padding="10,4" Margin="5,0">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBlock Text="DOWNLINK:" FontSize="10" Foreground="#888" VerticalAlignment="Center"/>
+                        <TextBlock Text="100%" FontSize="12" Foreground="#00FF00" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="5" Background="#1a1a1a" BorderBrush="#5a5a5e" BorderThickness="3" CornerRadius="4" Padding="10,4" Margin="5,0">
+                    <TextBlock Text="PORT" FontSize="10" Foreground="#888" VerticalAlignment="Center"/>
+                </Border>
+
+                <Button Grid.Column="6"
+                        Content="CONNECT"
+                        Command="{Binding ConnectCommand}"
+                        Background="{Binding ConnectButtonBackground}"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Padding="20,6"
+                        CornerRadius="4"
+                        Margin="10,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- CENTER INSTRUMENT PANEL (Ana kontrol paneli)                         -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <Grid Grid.Row="1" ColumnDefinitions="300, *, 400" Margin="10">
+
+            <!-- ─────────────────────────────────────────────────────────────── -->
+            <!-- LEFT PANEL: Map, Gauges (Battery, Altimeter, Clock)             -->
+            <!-- ─────────────────────────────────────────────────────────────── -->
+            <StackPanel Grid.Column="0" Spacing="10" Margin="0,10">
+
+                <!-- GPS Map (Sol en üst - YENİ!) -->
+                <controls:SimpleMapView DroneLatitude="{Binding DroneLatitude}"
+                                       DroneLongitude="{Binding DroneLongitude}"
+                                       DroneAltitude="{Binding DroneAltitude}"
+                                       DroneHeading="{Binding HeadingAngle}"
+                                       Height="600"/>
+
+                <!-- Battery Gauge (haritanın hemen altında) -->
+                <controls:BatteryGaugeView BatteryLevel="{Binding BatteryLevel}"/>
+
+            </StackPanel>
+
+            <!-- ─────────────────────────────────────────────────────────────── -->
+            <!-- CENTER PANEL: Artificial Horizon + Speed/Alt Data              -->
+            <!-- ─────────────────────────────────────────────────────────────── -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Margin="10,0">
+
+                <!-- Speed/Altitude Side Tapes (Üst bilgi paneli) -->
+                <Grid Grid.Row="0" ColumnDefinitions="*,*,*" Margin="0,10,0,10">
+
+                    <Border Grid.Column="0" Classes="instrument-panel" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="GROUND SPEED:" FontSize="11" Foreground="#888"/>
+                            <TextBlock Text="{Binding GroundSpeedText}" FontSize="20" Foreground="White" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Classes="instrument-panel" Padding="12" Margin="10,0">
+                        <StackPanel>
+                            <TextBlock Text="AIRSPEED:" FontSize="11" Foreground="#888"/>
+                            <TextBlock Text="{Binding AirSpeedText}" FontSize="20" Foreground="White" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Classes="instrument-panel" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="VERTICAL SPEED:" FontSize="11" Foreground="#888"/>
+                            <TextBlock Text="{Binding VerticalSpeedText}" FontSize="20" Foreground="White" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Artificial Horizon (Merkez - büyük) -->
+                <controls:ArtificialHorizonView Grid.Row="1"
+                                                PitchAngle="{Binding PitchAngle}"
+                                                RollAngle="{Binding RollAngle}"
+                                                YawAngle="{Binding HeadingAngle}"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Width="500" Height="500"/>
+
+                <!-- GPS ve Alt Telemetri (Alt bilgi paneli) -->
+                <Grid Grid.Row="2" ColumnDefinitions="*,*,*" Margin="0,10,0,0">
+
+                    <Border Grid.Column="0" Background="#8B0000" BorderBrush="#EF5350" BorderThickness="3" CornerRadius="6" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="GPS FIX:" FontSize="10" Foreground="White" FontWeight="Bold"/>
+                            <TextBlock Text="NO" FontSize="16" Foreground="White" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Classes="instrument-panel" Padding="12" Margin="10,0">
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <StackPanel>
+                                <TextBlock Text="LATITUDE:" FontSize="10" Foreground="#888"/>
+                                <TextBlock Text="{Binding LatitudeText}" FontSize="14" Foreground="#00FF00" FontWeight="Bold"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="LONGITUDE:" FontSize="10" Foreground="#888"/>
+                                <TextBlock Text="{Binding LongitudeText}" FontSize="14" Foreground="#00FF00" FontWeight="Bold"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Background="#8B0000" BorderBrush="#EF5350" BorderThickness="3" CornerRadius="6" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="UAV CHARGE:" FontSize="10" Foreground="White" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding BatteryText}" FontSize="16" Foreground="White" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+            </Grid>
+
+            <!-- ─────────────────────────────────────────────────────────────── -->
+            <!-- RIGHT PANEL: Compass, Pitch, Roll Indicators                    -->
+            <!-- ─────────────────────────────────────────────────────────────── -->
+            <StackPanel Grid.Column="2" Spacing="15" Margin="0,10">
+
+                <!-- Compass (Sağ üst) - GERÇEK DÖNEN PUSULA -->
+                <controls:HeadingCompassView Heading="{Binding HeadingAngle}"/>
+
+                <!-- Altimeter (Sağ orta) -->
+                <Border Classes="instrument-panel" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="ALTIMETER"
+                                   FontSize="12"
+                                   Foreground="#888"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,10"/>
+
+                        <!-- Analog altimeter display -->
+                        <Canvas Width="200" Height="200" HorizontalAlignment="Center">
+                            <Ellipse Width="200" Height="200"
+                                    Stroke="#555"
+                                    StrokeThickness="3"/>
+                            <TextBlock Text="{Binding AltitudeText}"
+                                      FontSize="32"
+                                      FontWeight="Bold"
+                                      Foreground="White"
+                                      HorizontalAlignment="Center"
+                                      Canvas.Left="50" Canvas.Top="80"/>
+                        </Canvas>
+                    </StackPanel>
+                </Border>
+
+
+            </StackPanel>
+
+        </Grid>
+
+
+    </Grid>
+</Window>

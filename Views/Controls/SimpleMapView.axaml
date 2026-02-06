@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
+             x:Class="AvionX.Views.Controls.SimpleMapView"
+             x:Name="Root">
+
+    <!--
+        SIMPLE MAP VIEW - Lightweight GPS Tracking
+
+        DESIGN PATTERN: Custom Control with Canvas Rendering
+        - Pure Canvas solution (no external map dependencies)
+        - GPS coordinate grid overlay
+        - Real-time drone position marker
+        - Flight path polyline
+        - Home location marker
+
+        FEATURES:
+        - Lat/Lon grid lines
+        - Drone position (red triangle)
+        - Home marker (yellow circle)
+        - Flight path (blue polyline)
+        - Distance to home calculation
+    -->
+
+    <Border Background="#0f0f0f"
+            CornerRadius="8"
+            Padding="10"
+            BorderBrush="#5a5a5e"
+            BorderThickness="3">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Başlık -->
+            <TextBlock Grid.Row="0"
+                       Text="MAP - GPS TRACKING"
+                       FontSize="12"
+                       Foreground="#666"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
+
+            <!-- Map Canvas with Terrain Background -->
+            <Border Grid.Row="1"
+                    Background="#1a1a1a"
+                    CornerRadius="4"
+                    ClipToBounds="True">
+                <Grid>
+                    <!-- Background: Terrain Pattern -->
+                    <Canvas x:Name="PART_TerrainCanvas">
+                        <!-- Terrain will be drawn programmatically -->
+                    </Canvas>
+
+                    <!-- Foreground: Overlays (drone, path, grid) -->
+                    <Canvas x:Name="PART_MapCanvas"/>
+                </Grid>
+            </Border>
+
+            <!-- Alt Bilgi Paneli - GPS Koordinatları -->
+            <Border Grid.Row="2"
+                    Background="#DD000000"
+                    CornerRadius="6"
+                    Padding="8,5"
+                    Margin="0,10,0,0"
+                    BorderBrush="#FFD700"
+                    BorderThickness="1">
+                <StackPanel>
+                    <!-- GPS Koordinatları -->
+                    <StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="LAT:"
+                                      Foreground="#888"
+                                      FontSize="10"
+                                      FontWeight="Bold"/>
+                            <TextBlock x:Name="PART_LatitudeText"
+                                      Text="41.0082°"
+                                      Foreground="#00FF00"
+                                      FontSize="10"
+                                      FontWeight="Bold"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="LON:"
+                                      Foreground="#888"
+                                      FontSize="10"
+                                      FontWeight="Bold"/>
+                            <TextBlock x:Name="PART_LongitudeText"
+                                      Text="28.9784°"
+                                      Foreground="#00FF00"
+                                      FontSize="10"
+                                      FontWeight="Bold"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="HOME:"
+                                      Foreground="#888"
+                                      FontSize="10"
+                                      FontWeight="Bold"/>
+                            <TextBlock x:Name="PART_DistanceText"
+                                      Text="0m"
+                                      Foreground="#F80"
+                                      FontSize="10"
+                                      FontWeight="Bold"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+
+</UserControl>
